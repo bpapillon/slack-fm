@@ -1,0 +1,4 @@
+package main
+
+const SLACK_API_KEY = ""
+const SLACK_CHANNEL_ID = ""
