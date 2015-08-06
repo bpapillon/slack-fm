@@ -26,12 +26,13 @@ func RecommendationListHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserHandler(w http.ResponseWriter, r *http.Request) {
-    response, err := GetUser(mux.Vars(r)["userId"])
+    slack_user, err := GetUserFromSlack(mux.Vars(r)["userId"])
+    GetOrCreateUser(slack_user)
     if err != nil {
         fmt.Fprintln(w, err)
         return
     }
-    responseBody, err := json.Marshal(response)
+    responseBody, err := json.Marshal(slack_user)
     if err != nil {
         fmt.Fprintln(w, err)
     } else {

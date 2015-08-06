@@ -81,11 +81,14 @@ func GetRecommendationMessages() ([]SlackMessage, error) {
         if err != nil {
             return nil, err
         }
+        // for i := 0; i < len(responseData.Messages); i++ {
+        //     tags := ParseTags(responseData.Messages[i].Text)
+        // }
         return responseData.Messages, nil
     }
 }
 
-func GetUser(userId string) (SlackUser, error) {
+func GetUserFromSlack(userId string) (SlackUser, error) {
     response, err := http.Get(fmt.Sprintf("https://slack.com/api/users.info?token=%s&user=%s", SLACK_API_KEY, userId))
     if err != nil {
         return SlackUser{}, err

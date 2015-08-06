@@ -1,4 +1,9 @@
 package main
 
-const SLACK_API_KEY = ""
-const SLACK_CHANNEL_ID = ""
+const (
+    DB_USER     = ""
+    DB_PASSWORD = ""
+    DB_NAME     = ""
+    SLACK_API_KEY = ""
+    SLACK_CHANNEL_ID = ""
+)
