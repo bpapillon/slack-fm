@@ -20,12 +20,12 @@ var routes = Routes{
         "/",
         Index,
     },
-    Route{
-        "RecommendationList",
-        "GET",
-        "/recommendations",
-        RecommendationListHandler,
-    },
+    // Route{
+    //     "RecommendationList",
+    //     "GET",
+    //     "/recommendations",
+    //     RecommendationListHandler,
+    // },
     Route{
         "User",
         "GET",

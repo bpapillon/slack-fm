@@ -4,6 +4,7 @@ import (
     "encoding/json"
     "fmt"
     "io/ioutil"
+    "log"
     "net/http"
     "regexp"
 )
@@ -35,6 +36,23 @@ type SlackMessage struct {
 type SlackRecommendationResponse struct {
     Ok bool
     Messages []SlackMessage
+    Has_more bool
+}
+
+type SlackProfile struct {
+    Image_24 string
+    Image_32 string
+    Image_48 string
+    Image_72 string
+    Image_192 string
+    First_name string
+    Last_name string
+    Title string
+    Skype string
+    Phone string
+    Real_name string
+    Real_name_normalized string
+    Email string
 }
 
 type SlackUser struct {
@@ -44,21 +62,7 @@ type SlackUser struct {
     Status string
     Color string
     Real_name string
-    Profile struct {
-        Image_24 string
-        Image_32 string
-        Image_48 string
-        Image_72 string
-        Image_192 string
-        First_name string
-        Last_name string
-        Title string
-        Skype string
-        Phone string
-        Real_name string
-        Real_name_normalized string
-        Email string
-    }
+    Profile SlackProfile
 }
 
 type SlackUserResponse struct {
@@ -66,26 +70,26 @@ type SlackUserResponse struct {
     User SlackUser
 }
 
-func GetRecommendationMessages() ([]SlackMessage, error) {
-    response, err := http.Get(fmt.Sprintf("https://slack.com/api/channels.history?token=%s&channel=%s", SLACK_API_KEY, SLACK_CHANNEL_ID))
-    if err != nil {
-        return nil, err
+func GetRecommendationMessages(params ...float64) ([]SlackMessage, bool) {
+    var url string
+    if len(params) > 1 {
+        url = fmt.Sprintf("https://slack.com/api/channels.history?token=%s&channel=%s&count=1000&oldest=%s&newest=%s", SLACK_API_KEY, SLACK_CHANNEL_ID, params[0], params[1])
     } else {
-        defer response.Body.Close()
-        contents, err := ioutil.ReadAll(response.Body)
-        if err != nil {
-            return nil, err
-        }
-        responseData := SlackRecommendationResponse{}
-        err = json.Unmarshal([]byte(contents), &responseData)
-        if err != nil {
-            return nil, err
-        }
-        // for i := 0; i < len(responseData.Messages); i++ {
-        //     tags := ParseTags(responseData.Messages[i].Text)
-        // }
-        return responseData.Messages, nil
+        url = fmt.Sprintf("https://slack.com/api/channels.history?token=%s&channel=%s&count=1000", SLACK_API_KEY, SLACK_CHANNEL_ID)
     }
+    log.Println(url)
+    response, err := http.Get(url)
+    defer response.Body.Close()
+    checkErr(err)
+    contents, err := ioutil.ReadAll(response.Body)
+    checkErr(err)
+    responseData := SlackRecommendationResponse{}
+    err = json.Unmarshal([]byte(contents), &responseData)
+    checkErr(err)
+    // for i := 0; i < len(responseData.Messages); i++ {
+    //     tags := ParseTags(responseData.Messages[i].Text)
+    // }
+    return responseData.Messages, responseData.Has_more
 }
 
 func GetUserFromSlack(userId string) (SlackUser, error) {
