@@ -25,12 +25,19 @@ type SlackMessageAttachment struct {
     Id int
 }
 
+type SlackMessageReaction struct {
+    Name string
+    Users []string
+    Count int
+}
+
 type SlackMessage struct {
     User string
     Subtype string
     Text string
     Ts string
     Attachments []SlackMessageAttachment
+    Reactions []SlackMessageReaction
 }
 
 type SlackRecommendationResponse struct {
@@ -70,7 +77,7 @@ type SlackUserResponse struct {
     User SlackUser
 }
 
-func GetRecommendationMessages(params ...float64) ([]SlackMessage, bool) {
+func GetRecommendationMessages(params ...string) ([]SlackMessage, bool) {
     var url string
     if len(params) > 1 {
         url = fmt.Sprintf("https://slack.com/api/channels.history?token=%s&channel=%s&count=1000&oldest=%s&newest=%s", SLACK_API_KEY, SLACK_CHANNEL_ID, params[0], params[1])
@@ -86,9 +93,6 @@ func GetRecommendationMessages(params ...float64) ([]SlackMessage, bool) {
     responseData := SlackRecommendationResponse{}
     err = json.Unmarshal([]byte(contents), &responseData)
     checkErr(err)
-    // for i := 0; i < len(responseData.Messages); i++ {
-    //     tags := ParseTags(responseData.Messages[i].Text)
-    // }
     return responseData.Messages, responseData.Has_more
 }
 

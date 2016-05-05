@@ -8,6 +8,7 @@ import (
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
+    DownloadRecommendations()
     fmt.Fprintln(w, "Hello Umbel.fm!")
 }
 

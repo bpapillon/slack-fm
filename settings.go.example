@@ -1,9 +1,9 @@
 package main
 
 const (
-    DB_USER     = ""
-    DB_PASSWORD = ""
-    DB_NAME     = ""
+    DB_USER     = "umbelfm"
+    DB_PASSWORD = "umbelfm"
+    DB_NAME     = "umbelfm"
     SLACK_API_KEY = ""
     SLACK_CHANNEL_ID = ""
 )
