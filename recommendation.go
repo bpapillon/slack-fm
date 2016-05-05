@@ -62,6 +62,10 @@ func DownloadRecommendations(params ...string) (string) {
     for _, message := range messages {
         if message.Attachments != nil && sourceWhitelist[message.Attachments[0].Service_name] {
             recommendation, _ := GetOrCreateRecommendation(message)
+            tags := ParseTags(message.Text)
+            for i := 0; i < len(tags); i++ {
+                GetOrCreateRecommendationTag(recommendation.Id, tags[i], recommendation.User_id)
+            }
             for i := 0; i < len(message.Reactions); i++ {
                 for j := 0; j < len(message.Reactions[i].Users); j++ {
                     slack_user, err := GetUserFromSlack(message.Reactions[i].Users[j])
